@@ -48,7 +48,8 @@ img#moviePoster {
 }
 
 #movieTitle, #movieOverview {
-    padding:  32px;
+    padding:  22px;
+    font-size: 38px;
 }
 
 #playBtn {
