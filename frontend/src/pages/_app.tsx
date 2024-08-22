@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
   <>
     <Menu className={`${inter.className}`} idApp={idApp}></Menu>
-     <Component {...pageProps} idApp={idApp} setIdApp={setIdApp} />
+     <Component className={`${inter.className}`} {...pageProps} idApp={idApp} setIdApp={setIdApp} />
   </>
 );
 }

@@ -72,9 +72,17 @@
 * {
   --colorDark: #191D1C;
   --colorLight: #FAFAFA;
+  overflow: hidden !important;
 }
 
 body {
   background-color: var(--colorDark);
   color: var(--colorLight);
+  overflow: hidden !important;
 }
+
+
+
+
+
+/* -------------------------------------------------------- */

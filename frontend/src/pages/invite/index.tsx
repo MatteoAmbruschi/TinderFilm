@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import { useSearchParams } from 'next/navigation'
 import styles from '@/styles/card.module.css'
 
-function Invite({setIdApp}: {setIdApp: any}) {
+function Invite({setIdApp, className}: {setIdApp: any, className: string}) {
         const [nickName, setNickName] = useState<any>('')
         const router = useRouter()
         const searchParams = useSearchParams()
@@ -46,7 +46,7 @@ function Invite({setIdApp}: {setIdApp: any}) {
         }
         
         return (
-        <div className={styles.card}>
+        <div className={`${styles.card} ${className}`}>
           <Card className="w-1/3 min-w-60">
             <CardHeader>
               <CardTitle>Accept the invite</CardTitle>

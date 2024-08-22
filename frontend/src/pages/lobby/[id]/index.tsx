@@ -12,7 +12,7 @@ import styles from "@/styles/card.module.css"
 import { useRouter } from "next/router"
 
 
-function LobbyId({setIdApp, idApp}: {idApp: any, setIdApp: any}) {
+function LobbyId({setIdApp, idApp, className}: {idApp: any, setIdApp: any, className: string}) {
   const router = useRouter()
 
   const copyUrl = async () => {
@@ -31,7 +31,7 @@ function LobbyId({setIdApp, idApp}: {idApp: any, setIdApp: any}) {
 
   
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${className}`}>
       <Card className="w-1/3 min-w-60">
         <CardHeader>
           <CardTitle>Copy Link</CardTitle>
