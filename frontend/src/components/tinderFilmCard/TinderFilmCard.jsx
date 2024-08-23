@@ -1,75 +1,91 @@
-import React, { useState, useMemo, useRef } from 'react'
+import React, { useState, useMemo, useRef, useEffect } from 'react'
 import TinderCard from 'react-tinder-card'
 import styles from './tinderFilmCard.module.css'
+import axios from 'axios'
 
-const db = [
-  {
-    name: 'Richard Hendricks',
-    url: 'https://mediaproxy.salon.com/width/1200/height/675/https://media2.salon.com/2019/04/suprised-man.jpg'
-  },
-  {
-    name: 'Erlich Bachman',
-    url: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?cs=srgb&dl=pexels-simon-robben-55958-614810.jpg&fm=jpg'
-  },
-  {
-    name: 'Monica Hall',
-    url: 'https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW4lMjBmYWNlfGVufDB8fDB8fHww'
-  },
-  {
-    name: 'Jared Dunn',
-    url: 'https://humanorigins.si.edu/sites/default/files/styles/slide_show/public/images/landscape/floresiensis_JG_Recon_Head_CC_3qtr_lt_l2.jpg.webp?itok=JpUMDW1v'
-  },
-  {
-    name: 'Dinesh Chugtai',
-    url: 'https://i.pinimg.com/736x/6e/48/e8/6e48e8b6d310388664324f9a129143fc.jpg'
-  }
-]
 
-function Advanced ({className}) {
-  const [currentIndex, setCurrentIndex] = useState(db.length - 1)
-  const [lastDirection, setLastDirection] = useState()
-  // used for outOfFrame closure
+function Advanced ({className, idApp}) {
+
+  const [currentIndex, setCurrentIndex] = useState(-1)
+  const [lastDirection, setLastDirection] = useState(null)
+  
   const currentIndexRef = useRef(currentIndex)
+
+  const [movies, setMovies] = useState([]) 
+  const [page, setPage] = useState(1)
+  const [info, setInfo] = useState('')
+
+  useEffect(() => {
+    axios.post(process.env.NEXT_PUBLIC_BACKEND + `/getMovieGenre/${idApp}`, {page})
+    .then((response) => {
+      if(response.status === 200) {
+        setMovies(response.data.results)
+      } else {
+        console.log('Error fetching movie types:', response.status);
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }, [idApp, page])
+
+
+  useEffect(() => {
+    axios.get(process.env.NEXT_PUBLIC_BACKEND + `/getInfo/${idApp}`)
+    .then((response) => {
+      if(response.status === 200) {
+        console.log(response.data)
+        setInfo(response.data)
+      } else {
+        console.log('Error fetching movie types:', response.status);
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }, [])
+
 
   const childRefs = useMemo(
     () =>
-      Array(db.length)
+      Array(movies.length)
         .fill(0)
-        .map((i) => React.createRef()),
-    []
+        .map(() => React.createRef()),
+    [movies] 
   )
+
+  useEffect(() => {
+    setCurrentIndex(movies.length - 1)
+  }, [movies])
 
   const updateCurrentIndex = (val) => {
     setCurrentIndex(val)
     currentIndexRef.current = val
   }
 
-  const canGoBack = currentIndex < db.length - 1
-
+  const canGoBack = currentIndex < movies.length - 1
   const canSwipe = currentIndex >= 0
 
-  // set last direction and decrease current index
   const swiped = (direction, nameToDelete, index) => {
     setLastDirection(direction)
     updateCurrentIndex(index - 1)
+
+    if(index === 0) {
+      setPage((prev) => prev + 1)
+    }
   }
 
   const outOfFrame = (name, idx) => {
     console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current)
-    // handle the case in which go back is pressed before card goes outOfFrame
-    currentIndexRef.current >= idx && childRefs[idx].current.restoreCard()
-    // TODO: when quickly swipe and restore multiple times the same card,
-    // it happens multiple outOfFrame events are queued and the card disappear
-    // during latest swipes. Only the last outOfFrame event should be considered valid
+/*     if (currentIndexRef.current >= idx) {
+      childRefs[idx].current.restoreCard()
+    } */
   }
 
   const swipe = async (dir) => {
-    if (canSwipe && currentIndex < db.length) {
-      await childRefs[currentIndex].current.swipe(dir) // Swipe the card!
+    if (canSwipe && currentIndex < movies.length) {
+      await childRefs[currentIndex].current.swipe(dir)
     }
   }
 
-  // increase current index and show card
   const goBack = async () => {
     if (!canGoBack) return
     const newIndex = currentIndex + 1
@@ -79,38 +95,30 @@ function Advanced ({className}) {
 
   return (
     <div className={`${styles.container} ${className}`}>
-      <link
-        href='https://fonts.googleapis.com/css?family=Damion&display=swap'
-        rel='stylesheet'
-      />
-      <link
-        href='https://fonts.googleapis.com/css?family=Alatsi&display=swap'
-        rel='stylesheet'
-      />
-      <h1 className={styles.h1}>React Tinder Card</h1>
+      <h1 className={styles.h1}>{info.type ? info.type : 'Loading...'}</h1>
       <div className={styles.cardContainer}>
-        {db.map((character, index) => (
+        {movies.map((movie, index) => (
           <TinderCard
             ref={childRefs[index]}
             className={styles.swipe}
-            key={character.name}
-            onSwipe={(dir) => swiped(dir, character.name, index)}
-            onCardLeftScreen={() => outOfFrame(character.name, index)}
+            key={movie.title}
+            onSwipe={(dir) => swiped(dir, movie.title, index)}
+            onCardLeftScreen={() => outOfFrame(movie.title, index)}
             preventSwipe={['up', 'down']}
           >
             <div
-              style={{ backgroundImage: 'url(' + character.url + ')' }}
+              style={{ backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie.poster_path})` }}
               className={styles.card}
             >
-              <h3>{character.name}</h3>
+              <h3>{movie.title}</h3>
             </div>
           </TinderCard>
         ))}
       </div>
           <div className={styles.buttons}>
             <div className={styles.buttonRow}>
-              <button style={{ backgroundColor: !canSwipe && '#c3c4d3' }} onClick={() => swipe('left')}>Swipe left!</button>
-              <button style={{ backgroundColor: !canSwipe && '#c3c4d3' }} onClick={() => swipe('right')}>Swipe right!</button>
+              <button style={{ backgroundColor: 'red' }} onClick={() => swipe('left')}>DISLIKE!</button>
+              <button style={{ backgroundColor: 'green' }} onClick={() => swipe('right')}>LIKE!</button>
             </div>
             <button style={{ backgroundColor: !canGoBack && '#c3c4d3' }} onClick={() => goBack()} className={styles.fullWidthButton}>
               Undo swipe!
@@ -122,7 +130,7 @@ function Advanced ({className}) {
         </h2>
       ) : (
         <h2 className={styles.infoText}>
-          Swipe a card or press a button to get Restore Card button visible!
+          Swipe a card!
         </h2>
       )}
     </div>

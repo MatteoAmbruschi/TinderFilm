@@ -1,8 +1,17 @@
-function Match() {
+import ButtonLobby from "@/components/buttonLobby/ButtonLobby";
+
+function Match({className, idApp}: {className: string, idApp: any}) {
   return (
-    <div>
-      
-    </div>
+    <>
+    {
+    idApp ? 
+        <div>
+            ciao
+        </div>
+    :
+        <ButtonLobby></ButtonLobby>
+    }
+    </>
   );
 }
 

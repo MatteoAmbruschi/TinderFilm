@@ -26,7 +26,7 @@ import { useRouter } from "next/router";
 export function CardWithForm({ setIdApp }: {setIdApp: any}) {
   const [movieTypes, setMovieTypes] = useState<Array<{ id: number, name: string }>>([]);
   const path = usePathname()
-  const [movieSelected, setMovieSelected] = useState<string>('')
+  const [movieSelected, setMovieSelected] = useState<{ id: number, name: string }>()
   const [nickName, setNickName] = useState<any>('')
   const router = useRouter()
 
@@ -51,7 +51,8 @@ export function CardWithForm({ setIdApp }: {setIdApp: any}) {
     try{
       const data = {
         name: nickName,
-        type: movieSelected
+        type: movieSelected?.name,
+        type_id: movieSelected?.id
       };
 
       await axios.post(process.env.NEXT_PUBLIC_BACKEND + '/lobby', data)
@@ -69,7 +70,7 @@ export function CardWithForm({ setIdApp }: {setIdApp: any}) {
       console.log(error)
     }
   }
-  
+  console.log(movieSelected)
   return (
     <Card className="w-1/3 min-w-60">
       <CardHeader>
@@ -89,7 +90,7 @@ export function CardWithForm({ setIdApp }: {setIdApp: any}) {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="framework">Movie Type</Label>
-              <Select onValueChange={(value) => setMovieSelected(value)}>
+              <Select onValueChange={(value) => setMovieSelected(movieTypes.find((type) => type.name === value))}>
                 <SelectTrigger id="framework">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>

@@ -1,5 +1,7 @@
 import TinderFilmCard from '@/components/tinderFilmCard/TinderFilmCard'
 import Link from 'next/link'
+import styles from './movie.module.css'
+import ButtonLobby from '@/components/buttonLobby/ButtonLobby'
 
 function MovieId({className, idApp}: {className: string, idApp: any}) {
 
@@ -8,12 +10,10 @@ function MovieId({className, idApp}: {className: string, idApp: any}) {
         {
         idApp ? 
             <div>
-                <TinderFilmCard className={className}></TinderFilmCard>
+                <TinderFilmCard idApp={idApp} className={className}></TinderFilmCard>
             </div>
         :
-        <div>
-            <Link href={'/'}>Lobby</Link>
-        </div>
+            <ButtonLobby></ButtonLobby>
         }
         </>
     )

@@ -36,7 +36,7 @@ export function SegmentedControl(items: SegmentedControlProps) {
               data-id={label}
               defaultValue={selected}
               href={items.idApp ? hrefWithIdApp : baseHref}
-              className='relative z-10 inline-flex w-28 items-center justify-center text-center text-zinc-50 transition-transform active:scale-[0.98] dark:text-zinc-50'
+              className='relative z-10 inline-flex w-28 items-center justify-center text-center text-zinc-50 transition-transform active:scale-[0.93] dark:text-zinc-50'
             >
               {label}
             </Link>

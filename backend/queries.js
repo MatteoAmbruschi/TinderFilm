@@ -37,12 +37,45 @@ const getMovie = (url, res) => {
 };
 
 
+const getMovieType = (url, lobbyId, page, res) => {
+  pool.query(
+    'SELECT type_id FROM lobby WHERE id = $1',
+    [lobbyId],
+    (err, result) => {
+      if (err) {
+        console.error('Error fetching genre ID:', err);
+        return res.status(500).json({ error: 'Error fetching genre ID' });
+      }
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Lobby not found' });
+      }
+
+      const type_id = result.rows[0].type_id;
+
+      const genreUrl = `${url}?with_genres=${type_id}&page=${page}&api_key=${process.env.TMDB_KEY}`;
+
+      fetch(genreUrl)
+        .then(response => response.json())
+        .then(data => {
+          /* console.log(data); */
+          res.status(200).send(data); // Send the data to the client
+        })
+        .catch(err => {
+          console.error('Error fetching movies:', err);
+          res.status(500).json({ error: 'Error fetching movies from the API' }); // Send an error to the client
+        });
+    }
+  );
+};
+
+
 const createLobby = (req, res) => {
-    const { type, name } = req.body;
+    const { type, type_id, name } = req.body;
 
     pool.query(
-        'INSERT INTO lobby (type) VALUES ($1) RETURNING *',
-        [type],
+        'INSERT INTO lobby (type, type_id) VALUES ($1, $2) RETURNING *',
+        [type, type_id],
         (err, result) => {
           if (err) {
             console.error('Error crating lobby', err);
@@ -82,9 +115,31 @@ const acceptInviteLobby = (req, res) => {
       });
 }
 
+const getInfo = (lobbyId, res) => {
+  pool.query(
+    'SELECT * FROM lobby WHERE id = $1',
+    [lobbyId],
+    (err, result) => {
+      if (err) {
+        console.error('Error fetching genre ID:', err);
+        return res.status(500).json({ error: 'Error fetching genre ID' });
+      }
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Lobby not found' });
+      }
+
+      console.log(result.rows[0])
+      res.status(200).json(result.rows[0]);
+    }
+  );
+}
+
 
 module.exports = {
     getMovie,
     createLobby,
-    acceptInviteLobby
+    acceptInviteLobby,
+    getMovieType,
+    getInfo
 }
