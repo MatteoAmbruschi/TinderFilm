@@ -24,7 +24,8 @@
     "react-dom": "^18",
     "react-tinder-card": "^1.6.4",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "use-onclickoutside": "^0.4.1"
   },
   "devDependencies": {
     "@types/node": "^20",
