@@ -8,7 +8,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
   const [idApp, setIdApp] = useState<any>(null)
-  console.log(idApp)
 
   return (
   <>

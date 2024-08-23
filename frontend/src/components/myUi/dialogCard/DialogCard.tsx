@@ -12,7 +12,6 @@ import {
   import { PlusIcon } from 'lucide-react';
   
   export function DialogBasicOne({movie}: {movie: any}) {
-    console.log(movie)
     return (
       <Dialog
         transition={{

@@ -10,9 +10,6 @@ interface SegmentedControlProps {
 export function SegmentedControl(items: SegmentedControlProps) {
   const params = usePathname()
   const selected = params?.replace('/', '').toUpperCase() || '';
-  console.log(items.idApp)
-
-
 
 
   return (

@@ -11,18 +11,18 @@ function Advanced ({className, idApp}) {
   const currentIndexRef = useRef(currentIndex)
 
   const [movies, setMovies] = useState([]) 
-  const [page, setPage] = useState(() => Math.floor(Math.random() * 500) + 1)
+  const [page, setPage] = useState(randomPage())
   const [info, setInfo] = useState('')
 
   function randomPage() {
-    console.log('prova')
-    return Math.floor(Math.random() * 500) + 1
+    return Math.floor(Math.random() * 10) + 1
   }
   
   useEffect(() => {
     axios.post(process.env.NEXT_PUBLIC_BACKEND + `/getMovieGenre/${idApp}`, {page})
     .then((response) => {
       if(response.status === 200) {
+        console.log(page)
         response.data.status_code === 22 ? setPage(randomPage()) : setMovies(response.data.results)
       }  else {
         console.log('Error fetching movie types:', response.status);
