@@ -72,7 +72,7 @@
 * {
   --colorDark: #191D1C;
   --colorLight: #FAFAFA;
-  overflow: hidden !important;
+/*   overflow: hidden !important; */
 }
 
 body {
@@ -83,6 +83,26 @@ body {
 
 
 
+/* Stile della scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px; 
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 1);
+  border-radius: 12px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 100, 100, 0.6); 
+}
+
+/* Per Firefox */
 
 
 /* -------------------------------------------------------- */

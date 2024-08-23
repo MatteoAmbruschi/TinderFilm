@@ -11,15 +11,20 @@ function Advanced ({className, idApp}) {
   const currentIndexRef = useRef(currentIndex)
 
   const [movies, setMovies] = useState([]) 
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(() => Math.floor(Math.random() * 500) + 1)
   const [info, setInfo] = useState('')
 
+  function randomPage() {
+    console.log('prova')
+    return Math.floor(Math.random() * 500) + 1
+  }
+  
   useEffect(() => {
     axios.post(process.env.NEXT_PUBLIC_BACKEND + `/getMovieGenre/${idApp}`, {page})
     .then((response) => {
       if(response.status === 200) {
-        setMovies(response.data.results)
-      } else {
+        response.data.status_code === 22 ? setPage(randomPage()) : setMovies(response.data.results)
+      }  else {
         console.log('Error fetching movie types:', response.status);
       }
     }).catch((error) => {
@@ -32,7 +37,6 @@ function Advanced ({className, idApp}) {
     axios.get(process.env.NEXT_PUBLIC_BACKEND + `/getInfo/${idApp}`)
     .then((response) => {
       if(response.status === 200) {
-        console.log(response.data)
         setInfo(response.data)
       } else {
         console.log('Error fetching movie types:', response.status);
@@ -45,14 +49,14 @@ function Advanced ({className, idApp}) {
 
   const childRefs = useMemo(
     () =>
-      Array(movies.length)
+      Array(movies?.length)
         .fill(0)
         .map(() => React.createRef()),
     [movies] 
   )
 
   useEffect(() => {
-    setCurrentIndex(movies.length - 1)
+    setCurrentIndex(movies?.length - 1)
   }, [movies])
 
   const updateCurrentIndex = (val) => {
@@ -60,7 +64,7 @@ function Advanced ({className, idApp}) {
     currentIndexRef.current = val
   }
 
-  const canGoBack = currentIndex < movies.length - 1
+  const canGoBack = currentIndex < movies?.length - 1
   const canSwipe = currentIndex >= 0
 
   const swiped = (direction, nameToDelete, index) => {
@@ -68,7 +72,7 @@ function Advanced ({className, idApp}) {
     updateCurrentIndex(index - 1)
 
     if(index === 0) {
-      setPage((prev) => prev + 1)
+      setPage(randomPage())
     }
   }
 
@@ -96,7 +100,7 @@ function Advanced ({className, idApp}) {
     <div className={`${styles.container} ${className}`}>
       <h1 className={styles.h1}>{info.type ? info.type : 'Loading...'}</h1>
       <div className={styles.cardContainer}>
-        {movies.map((movie, index) => (
+        {movies?.map((movie, index) => (
           <>
 
             <TinderCard
