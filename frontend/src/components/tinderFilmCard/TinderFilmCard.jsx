@@ -3,27 +3,68 @@ import TinderCard from 'react-tinder-card'
 import styles from './tinderFilmCard.module.css'
 import axios from 'axios'
 import { DialogBasicOne } from '../myUi/dialogCard/DialogCard'
+import seedrandom from 'seedrandom';
 function Advanced ({className, idApp}) {
 
-  const [currentIndex, setCurrentIndex] = useState(-1)
+  const saved = () => {
+    const savedState = localStorage.getItem(`advanced-state-${idApp}`);
+    if (savedState) {
+      return JSON.parse(savedState);
+    } else {
+      return { savedIteration: 1, savedCurrentIndex: -1 };
+    }
+  };
+
+  const savedState = saved();
+  const [currentIndex, setCurrentIndex] = useState(savedState.savedCurrentIndex)
   const [lastDirection, setLastDirection] = useState(null)
   
   const currentIndexRef = useRef(currentIndex)
 
-  const [movies, setMovies] = useState([]) 
-  const [page, setPage] = useState(randomPage())
+  const [movies, setMovies] = useState([])
+  const [iteration, setIteration] = useState(savedState.savedIteration )
+  const [page, setPage] = useState(randomPage(savedState.savedIteration))
   const [info, setInfo] = useState('')
 
-  function randomPage() {
-    return Math.floor(Math.random() * 10) + 1
+  useEffect(() => {
+    if (movies.length > 0) {
+      localStorage.setItem(`advanced-state-${idApp}`, JSON.stringify({
+        savedIteration: iteration,
+        savedCurrentIndex: currentIndex,
+      }));
+    }
+  }, [movies, iteration, currentIndex, page, idApp]);
+
+  
+  function randomPage(iteration) {
+    if (!idApp) {
+      console.error('idApp is undefined or null');
+      return Math.floor(Math.random() * 10) + 1;
+    }
+
+    const seed = idApp + '-' + iteration;
+    const rng = seedrandom(seed);
+    return Math.floor(rng() * 500) + 1; 
   }
+
+  useEffect(() => {
+    if (idApp) {
+      setPage(randomPage(iteration));
+    }
+  }, [idApp, iteration]);
   
   useEffect(() => {
     axios.post(process.env.NEXT_PUBLIC_BACKEND + `/getMovieGenre/${idApp}`, {page})
     .then((response) => {
       if(response.status === 200) {
-        console.log(page)
-        response.data.status_code === 22 ? setPage(randomPage()) : setMovies(response.data.results)
+        if (response.data.status_code === 22) {
+          setIteration(prev => prev + 1);
+        } else {
+          setMovies(response.data.results);
+/*           if (savedState.savedCurrentIndex === -1) {
+            setCurrentIndex(movies?.length - 1);
+          } */
+        }
       }  else {
         console.log('Error fetching movie types:', response.status);
       }
@@ -72,7 +113,7 @@ function Advanced ({className, idApp}) {
     updateCurrentIndex(index - 1)
 
     if(index === 0) {
-      setPage(randomPage())
+      setIteration(prev => prev + 1)
     }
   }
 
