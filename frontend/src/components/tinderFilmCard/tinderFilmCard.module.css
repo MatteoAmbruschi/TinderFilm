@@ -16,6 +16,7 @@
   
   .swipe {
     position: absolute;
+    user-select: none;
   }
   
   .cardContainer {

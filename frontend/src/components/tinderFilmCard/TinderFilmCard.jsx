@@ -60,10 +60,14 @@ function Advanced ({className, idApp}) {
         if (response.data.status_code === 22) {
           setIteration(prev => prev + 1);
         } else {
-          setMovies(response.data.results);
-/*           if (savedState.savedCurrentIndex === -1) {
-            setCurrentIndex(movies?.length - 1);
-          } */
+          if (savedState.savedCurrentIndex === -1) {
+            console.log(savedState.savedCurrentIndex)
+            return setMovies(response.data.results);
+          } else { 
+            const movieSliced = response.data.results.splice(0, savedState.savedCurrentIndex + 1)
+            console.log(savedState.savedCurrentIndex)
+            return setMovies(movieSliced);
+          }
         }
       }  else {
         console.log('Error fetching movie types:', response.status);
@@ -142,8 +146,6 @@ function Advanced ({className, idApp}) {
       <h1 className={styles.h1}>{info.type ? info.type : 'Loading...'}</h1>
       <div className={styles.cardContainer}>
         {movies?.map((movie, index) => (
-          <>
-
             <TinderCard
               ref={childRefs[index]}
               className={styles.swipe}
@@ -159,7 +161,6 @@ function Advanced ({className, idApp}) {
                 <DialogBasicOne movie={movie}></DialogBasicOne>
               </div>
             </TinderCard>
-          </>
         ))}
       </div>
           <div className={styles.buttons}>
