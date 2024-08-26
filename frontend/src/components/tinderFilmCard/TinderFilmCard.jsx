@@ -4,7 +4,7 @@ import styles from './tinderFilmCard.module.css'
 import axios from 'axios'
 import { DialogBasicOne } from '../myUi/dialogCard/DialogCard'
 import seedrandom from 'seedrandom';
-function Advanced ({className, idApp}) {
+function Advanced ({className, idApp, idUser}) {
 
   const saved = () => {
     const savedState = localStorage.getItem(`advanced-state-${idApp}`);
@@ -61,11 +61,9 @@ function Advanced ({className, idApp}) {
           setIteration(prev => prev + 1);
         } else {
           if (savedState.savedCurrentIndex === -1) {
-            console.log(savedState.savedCurrentIndex)
             return setMovies(response.data.results);
           } else { 
             const movieSliced = response.data.results.splice(0, savedState.savedCurrentIndex + 1)
-            console.log(savedState.savedCurrentIndex)
             return setMovies(movieSliced);
           }
         }
@@ -92,6 +90,35 @@ function Advanced ({className, idApp}) {
   }, [])
 
 
+  const callTheLike = async(movie) => {
+    const data ={movie: movie, idUser: idUser}
+    axios.post(process.env.NEXT_PUBLIC_BACKEND + `/selectedMovie`, {data})
+    .then((response) => {
+      if(response.status === 200) {
+        console.log(response.data)
+      } else {
+        console.log('Error fetching movie types:', response.status);
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
+  const undoSwipe = async() => {
+    const data ={idUser: idUser}
+    axios.put(process.env.NEXT_PUBLIC_BACKEND + `/undoSwipe`, {data})
+    .then((response) => {
+      if(response.status === 200) {
+        console.log(response.data)
+      } else {
+        console.log('Error fetching movie types:', response.status);
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
+
   const childRefs = useMemo(
     () =>
       Array(movies?.length)
@@ -112,12 +139,16 @@ function Advanced ({className, idApp}) {
   const canGoBack = currentIndex < movies?.length - 1
   const canSwipe = currentIndex >= 0
 
-  const swiped = (direction, nameToDelete, index) => {
+  const swiped = (direction, movie, index) => {
     setLastDirection(direction)
     updateCurrentIndex(index - 1)
 
     if(index === 0) {
       setIteration(prev => prev + 1)
+    }
+
+    if(direction === 'right'){
+      callTheLike(movie)
     }
   }
 
@@ -139,6 +170,11 @@ function Advanced ({className, idApp}) {
     const newIndex = currentIndex + 1
     updateCurrentIndex(newIndex)
     await childRefs[newIndex].current.restoreCard()
+    console.log()
+    if(lastDirection === 'right') {
+      console.log('undoSwipe')
+      await undoSwipe()
+    }
   }
 
   return (
@@ -150,7 +186,7 @@ function Advanced ({className, idApp}) {
               ref={childRefs[index]}
               className={styles.swipe}
               key={movie.title}
-              onSwipe={(dir) => swiped(dir, movie.title, index)}
+              onSwipe={(dir) => swiped(dir, movie, index)}
               onCardLeftScreen={() => outOfFrame(movie.title, index)}
               preventSwipe={['up', 'down']}
             >

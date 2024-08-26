@@ -135,11 +135,62 @@ const getInfo = (lobbyId, res) => {
   );
 }
 
+const selectedMovie = (req, res) => {
+  const movie = req.body.data.movie
+  const idUser = req.body.data.idUser
+
+  pool.query(`
+    UPDATE users 
+    SET movie_selected = 
+      CASE 
+        WHEN movie_selected IS NULL THEN ARRAY[$1] 
+        ELSE array_append(movie_selected, $1) 
+      END 
+    WHERE id = $2 
+    RETURNING *;
+    `,
+      [movie.id, idUser],
+      (err, result) => {
+          if (err) {
+              console.error('Error crating lobby', err);
+              res.status(500).json({ error: 'Error crating lobby' });
+              return;
+            }
+          res.status(200).json(result.rows[0]);
+      });
+}
+
+const undoSwipe = (req, res) => {
+  const idUser = req.body.data.idUser
+
+  pool.query( `
+    UPDATE users 
+    SET movie_selected = 
+      CASE 
+        WHEN array_length(movie_selected, 1) IS NOT NULL THEN array_remove(movie_selected, movie_selected[array_length(movie_selected, 1)]) 
+        ELSE movie_selected 
+      END 
+    WHERE id = $1 
+    RETURNING *;
+    `,
+      [idUser],
+      (err, result) => {
+          if (err) {
+              console.error('Error crating lobby', err);
+              res.status(500).json({ error: 'Error crating lobby' });
+              return;
+            }
+          res.status(200).json(result.rows[0]);
+      });
+}
+
 
 module.exports = {
     getMovie,
     createLobby,
     acceptInviteLobby,
     getMovieType,
-    getInfo
+    getInfo,
+    selectedMovie,
+    undoSwipe
 }

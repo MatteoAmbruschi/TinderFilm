@@ -8,11 +8,12 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
   const [idApp, setIdApp] = useState<any>(null)
-
+  const [idUser, setIdUser] = useState<any>(null)
+  
   return (
   <>
     <Menu className={`${inter.className}`} idApp={idApp}></Menu>
-     <Component className={`${inter.className}`} {...pageProps} idApp={idApp} setIdApp={setIdApp} />
+     <Component className={`${inter.className}`} {...pageProps} idApp={idApp} setIdApp={setIdApp} idUser={idUser} setIdUser={setIdUser} />
   </>
 );
 }

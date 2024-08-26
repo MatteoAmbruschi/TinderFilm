@@ -71,6 +71,10 @@ app.get('/getInfo/:lobbyId', (req, res) => {
 })
 
 
+app.post('/selectedMovie', db.selectedMovie)
+app.put('/undoSwipe', db.undoSwipe)
+
+
 app.listen(port, () => {
     console.log(`Example app listening on port http://localhost:${port}`);
   });

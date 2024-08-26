@@ -23,7 +23,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 
-export function CardWithForm({ setIdApp }: {setIdApp: any}) {
+export function CardWithForm({ setIdApp, setIdUser }: {setIdApp: any, setIdUser: any}) {
   const [movieTypes, setMovieTypes] = useState<Array<{ id: number, name: string }>>([]);
   const path = usePathname()
   const [movieSelected, setMovieSelected] = useState<{ id: number, name: string }>()
@@ -60,6 +60,7 @@ export function CardWithForm({ setIdApp }: {setIdApp: any}) {
         if(response.status === 200) {
           router.push(`/lobby/${response.data.lobby_id}`);
           setIdApp(response.data.lobby_id)
+          setIdUser(response.data.id)
           console.log(response)
         }
       }).catch((error) => {
