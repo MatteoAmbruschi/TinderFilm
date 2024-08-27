@@ -4,6 +4,7 @@ import styles from './tinderFilmCard.module.css'
 import axios from 'axios'
 import { DialogBasicOne } from '../myUi/dialogCard/DialogCard'
 import seedrandom from 'seedrandom';
+import CheckMatch from '../checkMatch/CheckMatch'
 function Advanced ({className, idApp, idUser}) {
 
   const saved = () => {
@@ -92,6 +93,7 @@ function Advanced ({className, idApp, idUser}) {
 
   const callTheLike = async(movie) => {
     const data ={movie: movie, idUser: idUser}
+    console.log(data)
     axios.post(process.env.NEXT_PUBLIC_BACKEND + `/selectedMovie`, {data})
     .then((response) => {
       if(response.status === 200) {
@@ -102,6 +104,9 @@ function Advanced ({className, idApp, idUser}) {
     }).catch((error) => {
       console.log(error)
     })
+
+    const dataMatch = {movie: movie, idApp: idApp}
+    CheckMatch({dataMatch})
   }
 
   const undoSwipe = async() => {
@@ -167,14 +172,12 @@ function Advanced ({className, idApp, idUser}) {
 
   const goBack = async () => {
     if (!canGoBack) return
+      if(lastDirection === 'right') {
+        undoSwipe()
+      }
     const newIndex = currentIndex + 1
     updateCurrentIndex(newIndex)
     await childRefs[newIndex].current.restoreCard()
-    console.log()
-    if(lastDirection === 'right') {
-      console.log('undoSwipe')
-      await undoSwipe()
-    }
   }
 
   return (

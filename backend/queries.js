@@ -27,7 +27,7 @@ const getMovie = (url, res) => {
     fetch(url, options)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            /* console.log(data); */
             res.status(200).send(data); // Invia i dati al client
         })
         .catch(err => {
@@ -129,7 +129,7 @@ const getInfo = (lobbyId, res) => {
         return res.status(404).json({ error: 'Lobby not found' });
       }
 
-      console.log(result.rows[0])
+      /* console.log(result.rows[0]) */
       res.status(200).json(result.rows[0]);
     }
   );
@@ -185,6 +185,69 @@ const undoSwipe = (req, res) => {
 }
 
 
+/* const checkMatch = (req, res) => {
+  const idApp = req.body.idApp
+  console.log('ID APPPP:', idApp)
+  
+  pool.query(`
+      WITH all_selected_movies AS (
+        SELECT unnest(users.movie_selected) AS movie_id
+        FROM users
+        WHERE users.lobby_id = $1
+      ),
+      common_movies AS (
+        SELECT movie_id
+        FROM all_selected_movies
+        GROUP BY movie_id
+        HAVING COUNT(*) = (SELECT COUNT(*) FROM users WHERE lobby_id = $1)
+      )
+
+      UPDATE lobby
+      SET match = array(SELECT movie_id FROM common_movies)
+      WHERE lobby.id = $1
+      RETURNING *;
+      `,
+      [idApp],
+      (err, result) => {
+          if (err) {
+              console.error('Error crating lobby', err);
+              res.status(500).json({ error: 'Error crating lobby' });
+              return;
+            }
+          
+          res.status(200).json(result.rows[0]);
+      });
+} */
+
+
+
+const checkMatch = (req, res) => {
+  const idApp = req.body.dataMatch.idApp
+  const movie = req.body.dataMatch.movie.id
+  pool.query(`
+      SELECT movie_selected
+      FROM users
+      WHERE lobby_id = $1
+      `,
+      [idApp],
+      (err, result) => {
+          if (err) {
+              console.error('Error crating lobby', err);
+              res.status(500).json({ error: 'Error crating lobby' });
+              return;
+            }
+
+            let match = []
+              for(let i = 0; i < result.rows.length; i++) {
+                match += result.rows[i].movie_selected.filter((id) => id === movie.id)
+              }
+
+              console.log(match)
+          
+          /* res.status(200).json(result.rows[0]); */
+      });
+}
+
 module.exports = {
     getMovie,
     createLobby,
@@ -192,5 +255,6 @@ module.exports = {
     getMovieType,
     getInfo,
     selectedMovie,
-    undoSwipe
+    undoSwipe,
+    checkMatch
 }

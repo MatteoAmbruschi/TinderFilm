@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import { useSearchParams } from 'next/navigation'
 import styles from '@/styles/card.module.css'
 
-function Invite({setIdApp, className}: {setIdApp: any, className: string}) {
+function Invite({setIdApp, className, setIdUser}: {setIdApp: any, className: string, setIdUser: any}) {
         const [nickName, setNickName] = useState<any>('')
         const router = useRouter()
         const searchParams = useSearchParams()
@@ -33,6 +33,7 @@ function Invite({setIdApp, className}: {setIdApp: any, className: string}) {
             .then((response) => {
                 if(response.status === 200) {
                     setIdApp(searchParams.get("lobby"))
+                    setIdUser(response.data.id)
                     router.push(`/${response.data.lobby_id}`)
                     console.log(response)
                 }
