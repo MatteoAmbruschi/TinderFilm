@@ -4,7 +4,7 @@ import styles from './tinderFilmCard.module.css'
 import axios from 'axios'
 import { DialogBasicOne } from '../myUi/dialogCard/DialogCard'
 import seedrandom from 'seedrandom';
-import CheckMatch from '../checkMatch/CheckMatch'
+import CheckMatchLike from '../checkMatchLike/CheckMatchLike'
 function Advanced ({className, idApp, idUser}) {
 
   const saved = () => {
@@ -97,16 +97,14 @@ function Advanced ({className, idApp, idUser}) {
     axios.post(process.env.NEXT_PUBLIC_BACKEND + `/selectedMovie`, {data})
     .then((response) => {
       if(response.status === 200) {
-        console.log(response.data)
+        const dataMatch = {movie, idApp}
+        CheckMatchLike({dataMatch})
       } else {
         console.log('Error fetching movie types:', response.status);
       }
     }).catch((error) => {
       console.log(error)
     })
-
-    const dataMatch = {movie: movie, idApp: idApp}
-    CheckMatch({dataMatch})
   }
 
   const undoSwipe = async() => {

@@ -185,9 +185,30 @@ const undoSwipe = (req, res) => {
 }
 
 
-/* const checkMatch = (req, res) => {
+
+const movieById = async (movieId) => {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: 'Bearer ' + process.env.TMDB_TOKEN 
+    }
+  };
+
+  try {
+    const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}`, options);
+    const data = await response.json();
+    return data; 
+  } catch (err) {
+    console.error('Error fetching movie data:', err);
+    throw new Error('Errore durante la richiesta al server');
+  }
+};
+
+
+const checkMatch = (req, res) => {
   const idApp = req.body.idApp
-  console.log('ID APPPP:', idApp)
+  console.log('ID APP:', idApp)
   
   pool.query(`
       WITH all_selected_movies AS (
@@ -208,45 +229,86 @@ const undoSwipe = (req, res) => {
       RETURNING *;
       `,
       [idApp],
-      (err, result) => {
-          if (err) {
-              console.error('Error crating lobby', err);
-              res.status(500).json({ error: 'Error crating lobby' });
-              return;
-            }
-          
-          res.status(200).json(result.rows[0]);
+      async (err, result) => {
+        if (result.rows.length > 0 && result.rows[0].match.length > 0) {
+          const movieIds = result.rows[0].match;
+
+          try {
+              const moviesData = await Promise.all(movieIds.map(movieById));
+              console.log(moviesData)
+              return res.status(200).json(moviesData); // Invia i dati dei film al client
+          } catch (error) {
+              return res.status(500).json({ error: error.message });
+          }
+      } else {
+          return res.status(200).json({ message: 'No common movies found' });
+      }
       });
-} */
+}
 
 
 
-const checkMatch = (req, res) => {
-  const idApp = req.body.dataMatch.idApp
-  const movie = req.body.dataMatch.movie.id
-  pool.query(`
-      SELECT movie_selected
-      FROM users
+const checkMatchLike = async (req, res) => {
+  try {
+    const idApp = req.body.dataMatch.idApp;
+    const movie = req.body.dataMatch.movie.id;
+
+    pool.query(`
+      SELECT movie_selected 
+      FROM users 
       WHERE lobby_id = $1
       `,
       [idApp],
       (err, result) => {
-          if (err) {
-              console.error('Error crating lobby', err);
-              res.status(500).json({ error: 'Error crating lobby' });
-              return;
-            }
+      if (err) {
+        console.error('Error crating lobby', err);
+        res.status(500).json({ error: 'Error crating lobby' });
+        return;
+      }
 
-            let match = []
-              for(let i = 0; i < result.rows.length; i++) {
-                match += result.rows[i].movie_selected.filter((id) => id === movie.id)
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No lobby found for this application ID" });
+    }
+
+    let allMovieSelections = [];
+    if (result.rows.length > 0) {
+      for (let i = 0; i < result.rows.length; i++) {
+        allMovieSelections = allMovieSelections.concat(result.rows[i].movie_selected);
+      }
+    }
+
+    const matchingMovies = allMovieSelections.filter(id => id == movie);
+    const matchingMoviesBoolean = matchingMovies.length === result.rows.length
+
+    if(matchingMoviesBoolean === true) {
+      pool.query(`
+          UPDATE lobby
+          SET match = array_append(match, $1)
+          WHERE id = $2
+          RETURNING *
+        `,
+        [movie, idApp],
+        (err, result) => {
+          if (err) {
+                console.error('Error updating lobby match', err);
+                return res.status(500).json({ error: 'Error updating lobby match' });
               }
 
-              console.log(match)
-          
-          /* res.status(200).json(result.rows[0]); */
-      });
-}
+              console.log('Updated lobby:', movie);
+              return res.status(200).json({ match: movie });
+            });
+          } else {
+            console.log({ match: null })
+            return res.status(200).json({ match: null });
+          }
+       })
+        }catch (error) {
+          console.error("Error checking match:", error);
+          res.status(500).json({ error: "Internal server error" });
+        }
+          };
+
+
 
 module.exports = {
     getMovie,
@@ -256,5 +318,6 @@ module.exports = {
     getInfo,
     selectedMovie,
     undoSwipe,
-    checkMatch
+    checkMatch,
+    checkMatchLike
 }

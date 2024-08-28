@@ -1,5 +1,4 @@
 'use client';
-import CheckMatch from '@/components/checkMatch/CheckMatch';
 import {
   Carousel,
   CarouselContent,
@@ -8,11 +7,11 @@ import {
   CarouselNavigation
 } from '@/components/ui/carousel'
 
-function CarouselMP({ className, idApp, idUser }: { className: string, idApp: any, idUser: any }) {
+function CarouselMP({ className, idApp, idUser, match }: { className: string, idApp: any, idUser: any, match: any }) {
 
   const ITEMS = new Array(4).fill(null).map((_, index) => index + 1);
   const { index, setIndex, itemsCount } = useCarousel();
-
+  console.log(match)
   return (
     <div className={className}>
       <CarouselContent className='relative'>
@@ -46,11 +45,11 @@ function CarouselMP({ className, idApp, idUser }: { className: string, idApp: an
   );
 }
 
-export function CarouselCustomIndicator({className, idApp, idUser}: {className: string, idApp: any, idUser: any}) {
+export function CarouselCustomIndicator({className, idApp, idUser, match}: {className: string, idApp: any, idUser: any, match: any}) {
   return (
     <div className='relative w-full max-w-xs py-8'>
       <Carousel>
-        <CarouselMP className={className} idApp={idApp} idUser={idUser} />
+        <CarouselMP className={className} idApp={idApp} idUser={idUser} match={match} />
       </Carousel>
     </div>
   );

@@ -75,6 +75,7 @@ app.post('/selectedMovie', db.selectedMovie)
 app.put('/undoSwipe', db.undoSwipe)
 
 app.put('/checkMatch', db.checkMatch)
+app.put('/checkMatchLike', db.checkMatchLike)
 
 
 app.listen(port, () => {
