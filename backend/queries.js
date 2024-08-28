@@ -236,7 +236,7 @@ const checkMatch = (req, res) => {
           try {
               const moviesData = await Promise.all(movieIds.map(movieById));
               console.log(moviesData)
-              return res.status(200).json(moviesData); // Invia i dati dei film al client
+              return res.status(200).send(moviesData); // Invia i dati dei film al client
           } catch (error) {
               return res.status(500).json({ error: error.message });
           }

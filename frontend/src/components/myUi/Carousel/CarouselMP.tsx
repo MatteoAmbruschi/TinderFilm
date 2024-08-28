@@ -6,36 +6,37 @@ import {
   useCarousel,
   CarouselNavigation
 } from '@/components/ui/carousel'
+import { DialogBasicOne } from '../dialogCard/DialogCard';
 
-function CarouselMP({ className, idApp, idUser, match }: { className: string, idApp: any, idUser: any, match: any }) {
-
+function CarouselMP({ className, idApp, idUser, match }: { className: string, idApp: any, idUser: any, match: Array<any> }) {
   const ITEMS = new Array(4).fill(null).map((_, index) => index + 1);
-  const { index, setIndex, itemsCount } = useCarousel();
+
   console.log(match)
+  const { index, setIndex, itemsCount } = useCarousel();
   return (
     <div className={className}>
       <CarouselContent className='relative'>
-        {ITEMS.map((item) => {
+        {match.map((movie) => {
           return (
-            <CarouselItem key={item} className='p-4'>
-              <div className='flex aspect-square items-center justify-center border border-zinc-200 dark:border-zinc-800'>
-                {item}
+            <CarouselItem key={movie.id} className='p-4'>
+              <div className='flex aspect-square items-center justify-center'>
+                <DialogBasicOne movie={movie} />
               </div>
             </CarouselItem>
           );
         })}
       </CarouselContent>
       <div className='flex w-full justify-center space-x-3 px-4'>
-        {ITEMS.map((item) => {
+        {match.map((movie, index) => {
           return (
             <button
-              key={item}
+              key={movie.id}
               type='button'
-              aria-label={`Go to slide ${item}`}
-              onClick={() => setIndex(item - 1)}
+              aria-label={`Go to slide ${movie.id}`}
+              onClick={() => setIndex(index)}
               className='h-12 w-12 border border-zinc-200 dark:border-zinc-800'
             >
-              {item}
+              {movie.vote_average}
             </button>
           );
         })}
