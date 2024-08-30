@@ -4,55 +4,101 @@ import { Inter } from "next/font/google";
 import { Menu } from "@/components/menu/Menu";
 import { useEffect, useState } from "react";
 import socketIO from "socket.io-client";
-import Lottie from 'react-lottie';
+import Lottie from "react-lottie";
+import hearts from "@/components/lotties/hearts.json";
+import PopUpMatch from "@/components/popUpMatch/PopUpMatch";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [idApp, setIdApp] = useState<any>(null)
-  const [idUser, setIdUser] = useState<any>(null)
-  const [matchAlert, setMatchAlert] = useState<any>(null)
-  
+  const [idApp, setIdApp] = useState<any>(null);
+  const [idUser, setIdUser] = useState<any>(null);
+  const [matchAlert, setMatchAlert] = useState<any>(null);
+
+  const [lottie, setLottie] = useState<boolean>(false);
+
+  const defaultOptions = {
+    loop: false,
+    autoplay: true,
+    animationData: hearts,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
+  const eventListeners = [
+    {
+      eventName: "complete" as const,
+      callback: () => setLottie(false),
+    },
+  ];
+
   useEffect(() => {
-    const socketInstance = socketIO(process.env.NEXT_PUBLIC_BACKEND || 'http://localhost:3000', {
-        transports: ['websocket'], // Forza il trasporto WebSocket
+    const socketInstance = socketIO(
+      process.env.NEXT_PUBLIC_BACKEND || "http://localhost:3000",
+      {
+        transports: ["websocket"], // Forza il trasporto WebSocket
+      }
+    );
+
+    socketInstance.on("connect", () => {
+      console.log("Socket connected:", socketInstance.id);
+      socketInstance.emit("join_lobby", idApp);
     });
-  
-    socketInstance.on('connect', () => {
-        console.log('Socket connected:', socketInstance.id);
-        socketInstance.emit('join_lobby', idApp);
+
+    socketInstance.on("disconnect", () => {
+      console.log("Socket disconnected");
     });
-  
-    socketInstance.on('disconnect', () => {
-        console.log('Socket disconnected');
+
+    socketInstance.on("connect_error", (err) => {
+      console.error("Connection error:", err);
     });
-  
-    socketInstance.on('connect_error', (err) => {
-        console.error('Connection error:', err);
+
+    socketInstance.on("match_update", (data) => {
+      console.log("Match updated:", data.match);
+      setLottie(true);
+      setMatchAlert(data.match);
+
+      /* alert(`New match: ${data.match}`); */
     });
-  
-    socketInstance.on('match_update', (data) => {
-        console.log('Match updated:', data.match);
-        setMatchAlert(data.match)
+
+    socketInstance.on("test_event", (data) => {
+      console.log("Test event received:", data.message);
     });
-  
-    socketInstance.on('test_event', (data) => {
-      console.log('Test event received:', data.message);
-  });
-  
+
     return () => {
-        socketInstance.disconnect();
+      socketInstance.disconnect();
     };
   }, [idApp]);
 
   return (
-  <>
-    <Menu className={`${inter.className}`} idApp={idApp}></Menu>
-     <Component className={`${inter.className}`} {...pageProps} idApp={idApp} setIdApp={setIdApp} idUser={idUser} setIdUser={setIdUser} />
+    <>
+      <Menu
+        className={`${inter.className}`}
+        idApp={idApp}
+      ></Menu>
+      <Component
+        className={`${inter.className}`}
+        {...pageProps}
+        idApp={idApp}
+        setIdApp={setIdApp}
+        idUser={idUser}
+        setIdUser={setIdUser}
+      />
 
-     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
-
-    <dotlottie-player src="https://lottie.host/8966acfa-48f7-4e64-8eb2-e89e211b98d7/CkE5R3MgYY.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
-  </>
-);
+      {matchAlert ? (
+        <div>
+          <PopUpMatch  setMatchAlert={setMatchAlert} matchAlert={matchAlert} />
+          {lottie && (
+            <div className="lottie">
+              <Lottie
+                options={defaultOptions}
+                eventListeners={eventListeners}
+              />
+            </div>
+          )}
+        </div>
+      ) : "" }
+    </>
+  );
 }

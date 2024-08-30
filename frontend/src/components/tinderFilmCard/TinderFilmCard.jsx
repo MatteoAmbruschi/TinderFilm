@@ -182,16 +182,9 @@ function Advanced ({className, idApp, idUser}) {
     await childRefs[newIndex].current.restoreCard()
   }
 
-  console.log(isMatch)
 
   return (
     <div className={`${styles.container} ${className}`}>
-      {  
-      isMatch?.match ? 
-      <div>{movies[currentIndex + 1]?.title}</div>
-      :
-      ''
-    }
       <h1 className={styles.h1}>{info.type ? info.type : 'Loading...'}</h1>
       <div className={styles.cardContainer}>
         {movies?.map((movie, index) => (

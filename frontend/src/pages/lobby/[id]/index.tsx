@@ -10,10 +10,20 @@ import {
 } from "@/components/ui/card"
 import styles from "@/styles/card.module.css"
 import { useRouter } from "next/router"
+import { useParams } from "next/navigation"
+import { useEffect } from "react"
 
 
 function LobbyId({setIdApp, idApp, className}: {idApp: any, setIdApp: any, className: string}) {
   const router = useRouter()
+  const path = useParams()
+
+  useEffect(() => {
+    if(path && Number(path.id) && !idApp) {
+      router.push(`/invite?lobby=${path.id}`);
+    }
+  }, [path])
+
 
   const copyUrl = async () => {
     try {

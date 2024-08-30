@@ -10,6 +10,7 @@ import {
     DialogContainer,
   } from '@/components/myUi/Dialog';
   import { PlusIcon } from 'lucide-react';
+  import { ScrollArea } from '@/components/ui/scroll-area';
   
   export function DialogBasicOne({movie}: {movie: any}) {
     return (
@@ -57,12 +58,11 @@ import {
         <DialogContainer>
           <DialogContent
             style={{
-              borderRadius: '24px',
-              overflowY: 'auto',
-              maxHeight: '90vh',         
+              borderRadius: '24px',        
             }}
             className='pointer-events-auto relative flex h-auto w-full flex-col overflow-hidden border border-zinc-950/10 bg-white dark:border-zinc-50/10 dark:bg-zinc-900 sm:w-[500px]'
           >
+            <ScrollArea className='h-[90vh]' type='scroll'>
             <DialogImage
               src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
               alt='A desk lamp designed by Edouard Wilfrid Buquet in 1925. It features a double-arm design and is made from nickel-plated brass, aluminium and varnished wood.'
@@ -88,6 +88,7 @@ import {
                 </p>
               </DialogDescription>
             </div>
+            </ScrollArea>
             <DialogClose className='text-zinc-50' />
           </DialogContent>
         </DialogContainer>
