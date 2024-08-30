@@ -5,6 +5,8 @@ import axios from 'axios'
 import { DialogBasicOne } from '../myUi/dialogCard/DialogCard'
 import seedrandom from 'seedrandom';
 import CheckMatchLike from '../checkMatchLike/CheckMatchLike'
+import removeMatch from '../removeMatch/removeMatch'
+
 function Advanced ({className, idApp, idUser}) {
 
   const saved = () => {
@@ -26,6 +28,7 @@ function Advanced ({className, idApp, idUser}) {
   const [iteration, setIteration] = useState(savedState.savedIteration )
   const [page, setPage] = useState(randomPage(savedState.savedIteration))
   const [info, setInfo] = useState('')
+  const [isMatch, setIsMatch] = useState({})
 
   useEffect(() => {
     if (movies.length > 0) {
@@ -98,7 +101,7 @@ function Advanced ({className, idApp, idUser}) {
     .then((response) => {
       if(response.status === 200) {
         const dataMatch = {movie, idApp}
-        CheckMatchLike({dataMatch})
+        CheckMatchLike({dataMatch, setIsMatch})
       } else {
         console.log('Error fetching movie types:', response.status);
       }
@@ -108,11 +111,14 @@ function Advanced ({className, idApp, idUser}) {
   }
 
   const undoSwipe = async() => {
-    const data ={idUser: idUser}
+    const idMovie = movies[currentIndex + 1]?.id
+
+    const data ={idUser: idUser, idMovie: idMovie}
     axios.put(process.env.NEXT_PUBLIC_BACKEND + `/undoSwipe`, {data})
     .then((response) => {
       if(response.status === 200) {
-        console.log(response.data)
+        console.log('undoSwipe Partito 200')
+          removeMatch({idApp, idMovie})
       } else {
         console.log('Error fetching movie types:', response.status);
       }
@@ -120,7 +126,6 @@ function Advanced ({className, idApp, idUser}) {
       console.log(error)
     })
   }
-
 
   const childRefs = useMemo(
     () =>
@@ -170,16 +175,23 @@ function Advanced ({className, idApp, idUser}) {
 
   const goBack = async () => {
     if (!canGoBack) return
-      if(lastDirection === 'right') {
-        undoSwipe()
-      }
+    undoSwipe()
+
     const newIndex = currentIndex + 1
     updateCurrentIndex(newIndex)
     await childRefs[newIndex].current.restoreCard()
   }
 
+  console.log(isMatch)
+
   return (
     <div className={`${styles.container} ${className}`}>
+      {  
+      isMatch?.match ? 
+      <div>{movies[currentIndex + 1]?.title}</div>
+      :
+      ''
+    }
       <h1 className={styles.h1}>{info.type ? info.type : 'Loading...'}</h1>
       <div className={styles.cardContainer}>
         {movies?.map((movie, index) => (

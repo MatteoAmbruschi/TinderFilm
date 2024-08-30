@@ -1,7 +1,6 @@
 if(process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
   }
-
 const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
@@ -9,10 +8,38 @@ const helmet = require('helmet');
 const db = require('./queries');
 
 const app = express();
+
+
+const socketIo = require('socket.io');
+const http = require('http');
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: process.env.NEXT_PUBLIC_URL, // Your frontend URL
+    methods: ['GET', 'POST', 'PUT'],
+    credentials: true,
+  },
+});
+
 const port = process.env.PORT || 3000;
 
 
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+  socket.on('join_lobby', (idApp) => {
+    socket.join(`lobby_${idApp}`);
+    console.log(`User ${socket.id} joined ${idApp}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
 const origin = [
+     process.env.NEXT_PUBLIC_URL,
+     process.env.NEXT_PUBLIC_BACKEND,
     'http://localhost:3001',
     'http://localhost:3001/',
     'http://localhost:3000',
@@ -33,6 +60,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
+app.use((req, res, next) => {
+  req.body.io = io
+  next()
+})
+
 
 app.get('/', (req, res) => {
   db.getMovie('https://api.themoviedb.org/3/authentication', res);
@@ -44,7 +76,7 @@ app.get('/getMovieTypes', (req, res) => {
 
 
 app.post('/getMovieGenre/:lobbyId', (req, res) => {
-  console.log('Lobby ID:', req.params.lobbyId);
+  /* console.log('Lobby ID:', req.params.lobbyId); */
   const lobbyId = parseInt(req.params.lobbyId, 10);
   const page = req.body.page || 1;
   console.log(page)
@@ -73,13 +105,24 @@ app.get('/getInfo/:lobbyId', (req, res) => {
 
 app.post('/selectedMovie', db.selectedMovie)
 app.put('/undoSwipe', db.undoSwipe)
+app.put('/removeMatch', db.removeMatch)
 
 app.put('/checkMatch', db.checkMatch)
+
 app.put('/checkMatchLike', db.checkMatchLike)
 
 
-app.listen(port, () => {
+/* setInterval(() => {
+  io.emit('test_event', { message: 'This is a test' });
+}, 5000);
+ */
+
+/* app.listen(port, () => {
     console.log(`Example app listening on port http://localhost:${port}`);
+  }); */
+  
+  server.listen(port, () => {
+    console.log(`Server is running on port http://localhost:${port}`);
   });
 
 
