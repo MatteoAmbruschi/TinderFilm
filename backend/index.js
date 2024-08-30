@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 const db = require('./queries');
 
 const app = express();
@@ -59,6 +60,7 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   req.body.io = io

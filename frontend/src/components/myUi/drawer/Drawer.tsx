@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import { Dialog, DialogImage } from "../Dialog"
 
 
 export function DrawerDemo({isOpen, onClose, setMatchAlert, matchAlert}: {isOpen: any, onClose: any, setMatchAlert: any, matchAlert: any}) {
@@ -33,14 +34,25 @@ export function DrawerDemo({isOpen, onClose, setMatchAlert, matchAlert}: {isOpen
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             <DrawerTitle>
-                {/* <Image src={}></Image> */}
+                
+
+
+
+                <Image
+                src={`https://image.tmdb.org/t/p/original/${matchAlert.poster_path}`}
+                alt={matchAlert.overview}
+                className='h-[346px] w-full object-cover'
+                width={600}
+                height={600}
+            />
+ 
             </DrawerTitle>
             <DrawerDescription>{matchAlert.overview}</DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="flex items-center justify-center space-x-2">
               <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter">
+                <div className="text-5xl font-bold tracking-tighter pb-3">
                   {matchAlert.title}
                 </div>
                 <div className="text-[0.70rem] uppercase text-muted-foreground">

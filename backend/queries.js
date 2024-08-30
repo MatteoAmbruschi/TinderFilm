@@ -71,6 +71,15 @@ const getMovieType = (url, lobbyId, page, res) => {
 
 const createLobby = (req, res) => {
   const { type, type_id, name } = req.body;
+  let userCookie;
+    try {
+      userCookie = req.cookies.name ? JSON.parse(req.cookies.name) : null;
+    } catch (err) {
+      console.error("Invalid cookie format", err);
+      userCookie = null;
+    }
+
+  console.log('cookie:', userCookie)
 
   pool.query(
     "INSERT INTO lobby (type, type_id) VALUES ($1, $2) RETURNING *",
@@ -83,13 +92,21 @@ const createLobby = (req, res) => {
       } else {
         pool.query(
           "INSERT INTO users (name, lobby_id) VALUES ($1, $2) RETURNING *",
-          [name, result.rows[0].id],
+          [userCookie || name, result.rows[0].id],
           (err, result) => {
             if (err) {
               console.error("Error crating lobby", err);
               res.status(500).json({ error: "Error crating lobby" });
               return;
             }
+
+            if(!userCookie){
+              res.cookie('name', JSON.stringify(name), {
+                httpOnly: true, // Assicura che il cookie sia accessibile solo dal server
+                secure: process.env.NODE_ENV === 'production', // Usa HTTPS in produzione
+                maxAge: 24 * 60 * 60 * 1000 // Durata del cookie di 1 giorno
+            })}
+  
             res.status(200).json(result.rows[0]);
           }
         );
@@ -100,16 +117,33 @@ const createLobby = (req, res) => {
 
 const acceptInviteLobby = (req, res) => {
   const { name, lobby_id } = req.body;
+    let userCookie;
+    try {
+      userCookie = req.cookies.name ? JSON.parse(req.cookies.name) : null;
+    } catch (err) {
+      console.error("Invalid cookie format", err);
+      userCookie = null;
+    }
+  console.log('cookie:', userCookie)
 
   pool.query(
     "INSERT INTO users (name, lobby_id) VALUES ($1, $2) RETURNING *",
-    [name, lobby_id],
+    [userCookie || name, lobby_id],
     (err, result) => {
       if (err) {
         console.error("Error crating lobby", err);
         res.status(500).json({ error: "Error crating lobby" });
         return;
       }
+
+    if(!userCookie){
+      res.cookie('name', JSON.stringify(name), {
+        httpOnly: true, // Assicura che il cookie sia accessibile solo dal server
+        secure: process.env.NODE_ENV === 'production', // Usa HTTPS in produzione
+        maxAge: 24 * 60 * 60 * 1000 // Durata del cookie di 1 giorno
+    })}
+
+
       res.status(200).json(result.rows[0]);
     }
   );

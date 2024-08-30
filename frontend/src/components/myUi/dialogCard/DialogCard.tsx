@@ -30,7 +30,7 @@ import {
         >
           <DialogImage
             src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-            alt='A desk lamp designed by Edouard Wilfrid Buquet in 1925. It features a double-arm design and is made from nickel-plated brass, aluminium and varnished wood.'
+            alt={movie.overview}
             className='h-[346px] w-full object-cover'
           />
           <div className='flex flex-grow flex-row items-end justify-between p-2 h-[90px]'>
