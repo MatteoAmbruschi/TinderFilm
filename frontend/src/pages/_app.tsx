@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import socketIO from "socket.io-client";
 import Lottie from "react-lottie";
 import hearts from "@/components/lotties/hearts.json";
-import PopUpMatch from "@/components/popUpMatch/PopUpMatch";
+import { DrawerDemo } from "@/components/myUi/drawer/Drawer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +14,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [idApp, setIdApp] = useState<any>(null);
   const [idUser, setIdUser] = useState<any>(null);
   const [matchAlert, setMatchAlert] = useState<any>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const [lottie, setLottie] = useState<boolean>(false);
 
@@ -58,7 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
       console.log("Match updated:", data.match);
       setLottie(true);
       setMatchAlert(data.match);
-
+      setIsDrawerOpen(true);
       /* alert(`New match: ${data.match}`); */
     });
 
@@ -70,6 +71,12 @@ export default function App({ Component, pageProps }: AppProps) {
       socketInstance.disconnect();
     };
   }, [idApp]);
+
+  useEffect(() => {
+    if (!matchAlert) {
+      setIsDrawerOpen(false);
+    }
+  }, [matchAlert]);
 
   return (
     <>
@@ -88,7 +95,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       {matchAlert ? (
         <div>
-          <PopUpMatch  setMatchAlert={setMatchAlert} matchAlert={matchAlert} />
+          <DrawerDemo setMatchAlert={setMatchAlert} matchAlert={matchAlert} isOpen={isDrawerOpen} onClose={() => setMatchAlert(null)} />
           {lottie && (
             <div className="lottie">
               <Lottie
