@@ -7,6 +7,8 @@ import { TextEffect } from '@/components/myUi/textEffect';
 function Match({className, idApp, idUser}: {className: string, idApp: any, idUser: any}) {
 
   const [match, setMatch] = useState<Array<any>>([])
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     axios.put(process.env.NEXT_PUBLIC_BACKEND + '/checkMatch', {idApp})
     .then((response) => {
@@ -17,9 +19,21 @@ function Match({className, idApp, idUser}: {className: string, idApp: any, idUse
           }
         }).catch((error) => {
           console.log("Error sending request:", error)
-      })
+      }).finally(() => setLoading(false))
   }, [idApp])
 
+  if(loading) {
+    return(
+      <div className="flex justify-center">
+        <div className="flex justify-center">
+            <TextEffect per='char' preset='fade'>
+              Loading...
+            </TextEffect>
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <>
     {

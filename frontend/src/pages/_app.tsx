@@ -9,6 +9,7 @@ import hearts from "@/components/lotties/hearts.json";
 import { DrawerDemo } from "@/components/myUi/drawer/Drawer";
 import { readCookie } from "@/components/cookies/Cookies";
 import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [lottie, setLottie] = useState<boolean>(false);
   
   const router = useRouter()
+  const path = usePathname()
 
   const defaultOptions = {
     loop: false,
@@ -83,8 +85,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
 
   useEffect(() => {
-    readCookie(setIdApp, setIdUser, router)
+    path !=='/invite' ? readCookie(setIdApp, setIdUser, router) : ''
   }, [])
+
+  console.log(path)
 
   return (
     <>

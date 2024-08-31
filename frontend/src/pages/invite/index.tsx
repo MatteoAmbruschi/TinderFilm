@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { useRouter } from "next/router";
 import { useSearchParams } from 'next/navigation'
 import styles from '@/styles/card.module.css'
+import { setCookie } from "@/components/cookies/Cookies";
 
 function Invite({setIdApp, className, setIdUser}: {setIdApp: any, className: string, setIdUser: any}) {
         const [nickName, setNickName] = useState<any>('')
@@ -32,6 +33,9 @@ function Invite({setIdApp, className, setIdUser}: {setIdApp: any, className: str
             await axios.post(process.env.NEXT_PUBLIC_BACKEND + '/acceptInvite', data)
             .then((response) => {
                 if(response.status === 200) {
+                    const cookies = {lobbyId: searchParams.get("lobby"), idUser: response.data.id}
+                    setCookie(cookies)
+
                     setIdApp(searchParams.get("lobby"))
                     setIdUser(response.data.id)
                     router.push(`/${response.data.lobby_id}`)
