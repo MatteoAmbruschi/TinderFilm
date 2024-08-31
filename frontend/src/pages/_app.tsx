@@ -7,6 +7,8 @@ import socketIO from "socket.io-client";
 import Lottie from "react-lottie";
 import hearts from "@/components/lotties/hearts.json";
 import { DrawerDemo } from "@/components/myUi/drawer/Drawer";
+import { readCookie } from "@/components/cookies/Cookies";
+import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +17,9 @@ export default function App({ Component, pageProps }: AppProps) {
   const [idUser, setIdUser] = useState<any>(null);
   const [matchAlert, setMatchAlert] = useState<any>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-
   const [lottie, setLottie] = useState<boolean>(false);
+  
+  const router = useRouter()
 
   const defaultOptions = {
     loop: false,
@@ -77,6 +80,11 @@ export default function App({ Component, pageProps }: AppProps) {
       setIsDrawerOpen(false);
     }
   }, [matchAlert]);
+
+
+  useEffect(() => {
+    readCookie(setIdApp, setIdUser, router)
+  }, [])
 
   return (
     <>

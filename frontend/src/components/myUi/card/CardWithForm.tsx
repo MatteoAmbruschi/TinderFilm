@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select"
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
+import { setCookie } from "@/components/cookies/Cookies";
 
 export function CardWithForm({ setIdApp, setIdUser }: {setIdApp: any, setIdUser: any}) {
   const [movieTypes, setMovieTypes] = useState<Array<{ id: number, name: string }>>([]);
@@ -55,13 +56,16 @@ export function CardWithForm({ setIdApp, setIdUser }: {setIdApp: any, setIdUser:
         type_id: movieSelected?.id
       };
 
-      await axios.post(process.env.NEXT_PUBLIC_BACKEND + '/lobby', data)
+      await axios.post(process.env.NEXT_PUBLIC_BACKEND + '/lobby', data, {
+        withCredentials: true
+      })
       .then((response) => {
         if(response.status === 200) {
+          const cookies = {lobbyId: response.data.lobby_id, idUser: response.data.id}
+          setCookie(cookies)
           router.push(`/lobby/${response.data.lobby_id}`);
           setIdApp(response.data.lobby_id)
           setIdUser(response.data.id)
-          console.log(response)
         }
       }).catch((error) => {
         console.log(error, 'error!')
@@ -71,6 +75,7 @@ export function CardWithForm({ setIdApp, setIdUser }: {setIdApp: any, setIdUser:
       console.log(error)
     }
   }
+
   console.log(movieSelected)
   return (
     <Card className="w-1/3 min-w-60">

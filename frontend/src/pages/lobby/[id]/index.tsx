@@ -12,9 +12,10 @@ import styles from "@/styles/card.module.css"
 import { useRouter } from "next/router"
 import { useParams } from "next/navigation"
 import { useEffect } from "react"
+import axios from "axios"
 
 
-function LobbyId({setIdApp, idApp, className}: {idApp: any, setIdApp: any, className: string}) {
+function LobbyId({setIdApp, setIdUser, idApp, className}: {idApp: any, setIdApp: any, className: string, setIdUser: any}) {
   const router = useRouter()
   const path = useParams()
 
@@ -34,9 +35,20 @@ function LobbyId({setIdApp, idApp, className}: {idApp: any, setIdApp: any, class
   }
 
   const deleteLobby = async () => {
-    setIdApp(null);
-    router.push('/');
-    return;
+    axios.get(process.env.NEXT_PUBLIC_BACKEND + '/deleteCookies', {
+      withCredentials: true,
+    })
+    .then((response) => {
+      if(response.status === 200) {
+        console.log('ciao')
+        setIdApp(null);
+        setIdUser(null);
+        router.push('/');
+        return;
+      } else{
+        console.log('Error in delete')
+      }
+    })
   }
 
   

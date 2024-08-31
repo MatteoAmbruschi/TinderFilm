@@ -68,6 +68,38 @@ app.use((req, res, next) => {
 })
 
 
+app.post('/set-cookie', (req, res) => {
+  const cookies = req.body.cookies;
+
+  res.cookie('name', JSON.stringify(cookies), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // True solo in produzione
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.status(200).send('Cookie is set');
+});
+
+app.get('/read-cookie', (req, res) => {
+  let userCookie;
+  try {
+    userCookie = req.cookies.name ? JSON.parse(req.cookies.name) : null;
+  } catch (err) {
+    console.error("Invalid cookie format", err);
+    userCookie = null;
+  }
+  console.log('cookie:', userCookie);
+  res.send({cookie: userCookie});
+});
+
+app.get('/deleteCookies', (req, res) => {
+  res.clearCookie('name', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  });
+  res.status(200).send('Cookie deleted');
+});
+
+
 app.get('/', (req, res) => {
   db.getMovie('https://api.themoviedb.org/3/authentication', res);
 });
