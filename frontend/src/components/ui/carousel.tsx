@@ -163,8 +163,8 @@ function CarouselIndicator({
             className={cn(
               'h-2 w-2 rounded-full transition-opacity duration-300',
               index === i
-                ? 'bg-zinc-950 dark:bg-zinc-50'
-                : 'bg-zinc-900/50 dark:bg-zinc-100/50',
+                ? 'bg-zinc-200 dark:bg-zinc-50'
+                : 'bg-zinc-300/50 dark:bg-zinc-100/50',
               classNameButton
             )}
           />

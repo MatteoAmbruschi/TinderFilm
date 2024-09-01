@@ -22,6 +22,7 @@ function Match({className, idApp, idUser}: {className: string, idApp: any, idUse
       }).finally(() => setLoading(false))
   }, [idApp])
 
+
   if(loading) {
     return(
       <div className="flex justify-center">

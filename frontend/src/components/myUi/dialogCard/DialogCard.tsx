@@ -73,7 +73,7 @@ import {
                 {movie.title}
               </DialogTitle>
               <DialogSubtitle className='text-zinc-700 dark:text-zinc-400'>
-              Rating: {movie.vote_average}
+              Rating: {movie.vote_average} &nbsp;&nbsp;&nbsp;  Date: {movie.release_date}
               </DialogSubtitle>
               <DialogDescription
                 disableLayoutAnimation

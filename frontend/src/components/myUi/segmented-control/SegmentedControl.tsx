@@ -1,6 +1,7 @@
 import AnimatedBackground from "@/components/myUi/animated-background/AnimateBackground";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import styles from './segmentedControl.module.css'
 
 interface SegmentedControlProps {
     items: string[];
@@ -13,7 +14,7 @@ export function SegmentedControl(items: SegmentedControlProps) {
 
 
   return (
-    <div className='rounded-[8px] p-[2px] dark:bg-zinc-800 bg-zinc-700'>
+    <div className={`rounded-[8px] p-[2px] dark:bg-zinc-800 bg-zinc-700 ${styles.containerMenu}`}>
       <AnimatedBackground
         defaultValue={items.items[0]}
         className='rounded-lg bg-zinc-500 dark:bg-zinc-700'
