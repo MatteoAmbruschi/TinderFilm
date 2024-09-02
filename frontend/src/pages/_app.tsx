@@ -86,7 +86,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     path !=='/invite' ? readCookie(setIdApp, setIdUser, router) : ''
-  }, [idApp])
+  }, [])
 
   console.log(path)
 
