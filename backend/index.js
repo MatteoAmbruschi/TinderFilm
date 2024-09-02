@@ -57,6 +57,7 @@ const origin = [
 
 const corsOptions = {
     origin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     optionsSuccessStatus: 200,
     credentials: true
   }
@@ -67,6 +68,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.options('*', cors(corsOptions));
 
 app.use((req, res, next) => {
   req.body.io = io
