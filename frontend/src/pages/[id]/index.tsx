@@ -21,7 +21,7 @@ function MovieId({className, idApp, idUser}: {className: string, idApp: any, idU
         <>
         {
         idApp ? 
-            <div>
+            <div className={styles.container}>
                 <TinderFilmCard idApp={idApp} idUser={idUser} className={className}></TinderFilmCard>
             </div>
         :
