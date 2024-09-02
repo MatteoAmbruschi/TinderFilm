@@ -41,7 +41,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const socketInstance = socketIO(
-      "wss://tinder-film-backend.vercel.app",
+      process.env.NEXT_PUBLIC_BACKEND || "https://tinder-film-backend.vercel.app",
       {
         transports: ["websocket"], // Forza il trasporto WebSocket
       }
