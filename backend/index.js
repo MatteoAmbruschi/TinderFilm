@@ -83,7 +83,7 @@ app.post('/set-cookie', (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // True solo in produzione
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+    /* sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax' */
   });
   console.log('Cookie is set', cookies)
   res.status(200).send('Cookie is set');
