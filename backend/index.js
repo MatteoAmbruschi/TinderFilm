@@ -50,6 +50,8 @@ const origin = [
     'https://tinder-film.vercel.app',
     'https://tinder-film.vercel.app/',
     'https://tinder-film-backend.vercel.app',
+    'https://tinder-film-backend.vercel.app/',
+    'https://tinder-film-backend.vercel.app',
     'https://tinder-film-backend.vercel.app/'
 ]
 
