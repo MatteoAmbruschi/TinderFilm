@@ -81,7 +81,7 @@ app.post('/set-cookie', (req, res) => {
 
   res.cookie('name', JSON.stringify(cookies), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // True solo in produzione
+    /* secure: process.env.NODE_ENV === 'production', */ // True solo in produzione
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(200).send('Cookie is set');
@@ -102,7 +102,7 @@ app.get('/read-cookie', (req, res) => {
 app.get('/deleteCookies', (req, res) => {
   res.clearCookie('name', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    /* secure: process.env.NODE_ENV === 'production', */
   });
   res.status(200).send('Cookie deleted');
 });
