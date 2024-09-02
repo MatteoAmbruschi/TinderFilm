@@ -4,19 +4,26 @@ if (process.env.NODE_ENV !== "production") {
 const fetch = require("node-fetch");
 const Pool = require("pg").Pool;
 
-pool = new Pool({
-  user: process.env.USER,
-  host: process.env.HOST,
-  database: process.env.DATABASE,
-  password: process.env.PASSWORD,
-  port: process.env.PORT_POOL,
-});
-
-// Attiva SSL solo in ambiente di produzione
-if (process.env.NODE_ENV === 'production') {
-  pool.ssl = {
-    rejectUnauthorized: true,
-  };
+let pool
+if(process.env.NODE_ENV === 'production') {
+  pool = new Pool({
+    user: process.env.USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
+    port: process.env.PORT_POOL,
+        ssl: {
+          rejectUnauthorized: false
+      }
+  });
+} else {
+  pool = new Pool({
+    user: process.env.USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
+    port: process.env.PORT_POOL,
+  });
 }
 
 const getMovie = (url, res) => {
