@@ -41,7 +41,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const socketInstance = socketIO(
-      process.env.NEXT_PUBLIC_BACKEND || "https://tinderfilm.onrender.com",
+      process.env.NEXT_PUBLIC_BACKEND ?  process.env.NEXT_PUBLIC_BACKEND : "https://tinderfilm.onrender.com",
       {
         transports: ["websocket"], // Forza il trasporto WebSocket
       }
