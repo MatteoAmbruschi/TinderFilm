@@ -5,7 +5,14 @@ const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
-const cookieParser = require('cookie-parser');
+
+
+/* const cookieParser = require('cookie-parser'); */
+
+const session = require("express-session");
+const MemoryStore = require('memorystore')(session)
+
+
 const db = require('./queries');
 
 const app = express();
@@ -67,7 +74,7 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
-app.use(cookieParser());
+/* app.use(cookieParser()); */
 app.options('*', cors(corsOptions));
 
 app.use((req, res, next) => {
@@ -76,12 +83,33 @@ app.use((req, res, next) => {
 })
 
 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: new MemoryStore({ 
+    checkPeriod: 86400000, // Check expired sessions every 24 hours
+    ttl: 7 * 24 * 60 * 60 * 1000, // Session TTL: 7 days
+    dispose: (key, value) => {
+      console.log(`Session ${key} is being disposed.`);
+    },
+  }),
+  cookie: {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  }
+}));
+
+
+
 app.post('/set-cookie', (req, res) => {
   const cookies = req.body.cookies;
 
   res.cookie('name', JSON.stringify(cookies), {
     httpOnly: true,
-    /* secure: process.env.NODE_ENV === 'production', */ // True solo in produzione
+    secure: process.env.NODE_ENV === 'production', // True solo in produzione
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(200).send('Cookie is set');
@@ -102,7 +130,7 @@ app.get('/read-cookie', (req, res) => {
 app.get('/deleteCookies', (req, res) => {
   res.clearCookie('name', {
     httpOnly: true,
-    /* secure: process.env.NODE_ENV === 'production', */
+    secure: process.env.NODE_ENV === 'production',
   });
   res.status(200).send('Cookie deleted');
 });
