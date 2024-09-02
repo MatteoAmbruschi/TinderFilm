@@ -1,6 +1,7 @@
 import axios from "axios"
 
 export const setCookie = (cookies: {}) => {
+  console.log(cookies)
     axios.post(process.env.NEXT_PUBLIC_BACKEND + '/set-cookie', {cookies}, {
       withCredentials: true,
     })
