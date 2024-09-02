@@ -47,6 +47,10 @@ const origin = [
     'http://localhost:3000/',
     'http://localhost:5173/',
     'http://localhost:5173',
+    'https://tinder-film.vercel.app',
+    'https://tinder-film.vercel.app/',
+    'https://tinder-film-backend.vercel.app',
+    'https://tinder-film-backend.vercel.app/'
 ]
 
 const corsOptions = {
