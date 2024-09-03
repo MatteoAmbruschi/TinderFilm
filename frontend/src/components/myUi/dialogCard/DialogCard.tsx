@@ -11,6 +11,7 @@ import {
   } from '@/components/myUi/Dialog';
   import { PlusIcon } from 'lucide-react';
   import { ScrollArea } from '@/components/ui/scroll-area';
+  import styles from './dialogCard.module.css'
   
   export function DialogBasicOne({movie}: {movie: any}) {
     return (
@@ -31,7 +32,7 @@ import {
           <DialogImage
             src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
             alt={movie.overview}
-            className='h-[346px] w-full object-cover'
+            className={`w-full object-cover ${styles.dialogImage}`}
           />
           <div className='flex flex-grow flex-row items-end justify-between p-2 h-[90px]'>
             <div>

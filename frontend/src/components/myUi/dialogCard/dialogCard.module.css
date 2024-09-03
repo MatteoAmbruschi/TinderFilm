@@ -1,0 +1,18 @@
+  
+ /*  
+.dialogImage {
+        height: 43vh;
+    };
+   */
+
+   @media (min-height: 800px){
+    .dialogImage {
+        height: 43vh;
+    }
+  }
+
+  @media (max-height: 800px){
+    .dialogImage {
+        height: 39vh;
+    }
+  }

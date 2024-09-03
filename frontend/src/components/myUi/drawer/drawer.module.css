@@ -1,0 +1,10 @@
+.image {
+    height: 346px;
+}
+
+
+@media (max-height: 900px){
+    .image {
+        height: 37vh;
+    }
+  }

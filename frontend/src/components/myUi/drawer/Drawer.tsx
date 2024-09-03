@@ -4,15 +4,13 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Dialog, DialogImage } from "../Dialog"
+import styles from './drawer.module.css'
 
 
 export function DrawerDemo({isOpen, onClose, setMatchAlert, matchAlert}: {isOpen: any, onClose: any, setMatchAlert: any, matchAlert: any}) {
@@ -34,18 +32,13 @@ export function DrawerDemo({isOpen, onClose, setMatchAlert, matchAlert}: {isOpen
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             <DrawerTitle>
-                
-
-
-
                 <Image
                 src={`https://image.tmdb.org/t/p/original/${matchAlert.poster_path}`}
                 alt={matchAlert.overview}
-                className='h-[346px] w-full object-cover'
+                className={`w-full object-cover ${styles.image}`}
                 width={600}
                 height={600}
             />
- 
             </DrawerTitle>
             <DrawerDescription>{matchAlert.overview}</DrawerDescription>
           </DrawerHeader>
