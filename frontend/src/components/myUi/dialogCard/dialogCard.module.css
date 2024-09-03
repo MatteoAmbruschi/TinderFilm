@@ -19,6 +19,6 @@
         height: 39vh;
     }
     .dialogContent{
-      max-height: 90vh;
+      max-height: 80vh !important;
     }
   }
