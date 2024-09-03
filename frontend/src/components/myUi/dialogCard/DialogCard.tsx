@@ -69,7 +69,7 @@ import {
               alt='A desk lamp designed by Edouard Wilfrid Buquet in 1925. It features a double-arm design and is made from nickel-plated brass, aluminium and varnished wood.'
               className='h-auto object-cover w-full'
             />
-            <div className='p-6'>
+            <div className='p-6 pb-14'>
               <DialogTitle className='text-2xl text-zinc-950 dark:text-zinc-50'>
                 {movie.title}
               </DialogTitle>
