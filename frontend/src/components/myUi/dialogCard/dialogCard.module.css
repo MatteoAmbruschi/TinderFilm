@@ -9,10 +9,16 @@
     .dialogImage {
         height: 43vh;
     }
+    .dialogContent{
+      max-height: 90vh;
+    }
   }
 
   @media (max-height: 800px){
     .dialogImage {
         height: 39vh;
+    }
+    .dialogContent{
+      max-height: 90vh;
     }
   }
