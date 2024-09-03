@@ -21,4 +21,8 @@
     .dialogContent{
       max-height: 80vh !important;
     }
+
+    .containerBottom{
+      padding-bottom: 70px !important;
+    }
   }
