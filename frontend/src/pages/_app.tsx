@@ -4,12 +4,14 @@ import { Inter } from "next/font/google";
 import { Menu } from "@/components/menu/Menu";
 import { useEffect, useState } from "react";
 import socketIO from "socket.io-client";
-import Lottie from "react-lottie";
-import hearts from "@/components/lotties/hearts.json";
 import { DrawerDemo } from "@/components/myUi/drawer/Drawer";
 import { readCookie } from "@/components/cookies/Cookies";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
+import { lazy } from "react";
+import hearts from "@/components/lotties/hearts.json";
+
+const Lottie = lazy(() => import('react-lottie'));
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -63,7 +63,8 @@ const getMovieType = (url, lobbyId, page, res) => {
 
       const type_id = result.rows[0].type_id;
 
-      const genreUrl = `${url}?with_genres=${type_id}&page=${page}&api_key=${process.env.TMDB_KEY}`;
+      // filtro dei film
+      const genreUrl = `${url}?with_genres=${type_id}&page=${page}&api_key=${process.env.TMDB_KEY}&primary_release_date.gte=2015-01-01`; //tutti i film dal 2015 in poi
 
       fetch(genreUrl)
         .then((response) => response.json())
